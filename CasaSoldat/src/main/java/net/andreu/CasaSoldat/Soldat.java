@@ -1,16 +1,23 @@
 package net.andreu.CasaSoldat;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import acm.graphics.GImage;
 
-public class Soldat {
+public class Soldat implements Serializable {
 
-	private GImage imatge;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2965721377552212627L;
+
+	private transient GImage imatge;
 	private boolean esGroc;
 	private int posicioX;
 	private int posicioY;
 	private int midaFinestraX;
+	@SuppressWarnings("unused")
 	private int midaFinestraY;
 	private int direccio;
 	private int velocitat;
@@ -66,6 +73,15 @@ public class Soldat {
 	public void mou() {
 		
 		imatge.move(direccio * velocitat, 0);
+		
+		posicioX = (int)imatge.getLocation().getX();
+		posicioY = (int)imatge.getLocation().getY();
+		
+		if (imatge.getLocation().getX() > midaFinestraX) {
+			imatge.setLocation(0 - imatge.getBounds().getWidth(), posicioY);
+		} else if (imatge.getLocation().getX() < 0 - imatge.getBounds().getWidth()) {
+			imatge.setLocation(midaFinestraX, posicioY);
+		}
 
 	}
 
