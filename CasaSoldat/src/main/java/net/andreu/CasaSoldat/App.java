@@ -1,6 +1,8 @@
 package net.andreu.CasaSoldat;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +16,7 @@ import acm.program.GraphicsProgram;
  * Hello world!
  * 
  */
-public class App extends GraphicsProgram {
+public class App extends GraphicsProgram implements MouseListener{
 
 	/**
 	 * 
@@ -44,8 +46,7 @@ public class App extends GraphicsProgram {
 			}else{
 				juga = new Joc(AMPLADA_PANTALLA, ALTURA_PANTALLA);
 			}
-			
-				
+
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -53,19 +54,30 @@ public class App extends GraphicsProgram {
 
 		setSize(AMPLADA_PANTALLA, ALTURA_PANTALLA);
 		addKeyListeners();
+		addMouseListeners();
 	}
 
 	public final void run() {
 
+		GLabel marcador=new GLabel("");
 		clicaPerComencar();
 
-		for (Soldat s : juga.getSoldats()) {
-			add(s.getImatge());
-		}
 		while (juga.gameOver()==0) {
 			juga.mou();
-			pause(100);
+			
+			for (Soldat s : juga.getSoldats()) {
+				add(s.getImatge());
+			}
+			
+			remove(marcador);
+			marcador = juga.getMarcador();
+			add(marcador);
+			pause(180);
 		}
+		remove(marcador);
+		marcador = juga.getMarcador();
+		add(marcador);
+		
 		if(juga.gameOver()==2){
 			File f = new File("../../joc.txt");
 			FileOutputStream fitxer;
@@ -95,10 +107,20 @@ public class App extends GraphicsProgram {
 		remove(label);
 	}
 
-	// Event
+	// Event teclat
 	public void keyPressed(KeyEvent e) {
 
 		juga.evenTeclat(e.getKeyCode());
-
+	}
+	
+	// Event ratoli
+	@Override
+	public void mouseClicked(MouseEvent e){
+		
+		for (Soldat s : juga.getSoldats()) {
+			if(s.mHanClicat(e.getX(), e.getY())){
+				juga.afegeixMorts();
+			}
+		}
 	}
 }

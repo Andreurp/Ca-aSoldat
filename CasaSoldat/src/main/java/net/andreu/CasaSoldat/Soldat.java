@@ -14,6 +14,8 @@ public class Soldat implements Serializable {
 
 	private transient GImage imatge;
 	private boolean esGroc;
+	
+
 	private int posicioX;
 	private int posicioY;
 	private int midaFinestraX;
@@ -21,6 +23,8 @@ public class Soldat implements Serializable {
 	private int midaFinestraY;
 	private int direccio;
 	private int velocitat;
+	private boolean escapat=false;
+	private boolean mort=false;
 
 	private Random rand = new Random();
 
@@ -77,12 +81,39 @@ public class Soldat implements Serializable {
 		posicioX = (int)imatge.getLocation().getX();
 		posicioY = (int)imatge.getLocation().getY();
 		
-		if (imatge.getLocation().getX() > midaFinestraX) {
+		if (!mort && imatge.getLocation().getX() > midaFinestraX) {
 			imatge.setLocation(0 - imatge.getBounds().getWidth(), posicioY);
-		} else if (imatge.getLocation().getX() < 0 - imatge.getBounds().getWidth()) {
+			if(esGroc){
+				escapat = true;
+			}
+		} else if (!mort && imatge.getLocation().getX() < 0 - imatge.getBounds().getWidth()) {
 			imatge.setLocation(midaFinestraX, posicioY);
+			if(esGroc){
+				escapat = true;
+			}
 		}
-
 	}
-
+	
+	public boolean sHaEscapat(){
+		boolean esc = escapat;
+		escapat=false;
+		return esc;
+	}
+	
+	public boolean mHanClicat(int x, int y){
+		
+		boolean clicat = false;
+		
+		if(esGroc&&(x > posicioX && x < posicioX + imatge.getWidth()) && (y > posicioY && y< posicioY + imatge.getHeight())){
+			imatge.setLocation(-100,-100);
+			velocitat = 0;
+			mort=true;
+			clicat=true;
+		}
+		return clicat;
+	}
+	
+	public boolean isEsGroc() {
+		return esGroc;
+	}
 }

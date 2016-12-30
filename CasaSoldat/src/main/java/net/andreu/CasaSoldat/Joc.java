@@ -16,13 +16,16 @@ public class Joc implements Serializable{
 	private int AMPLADA_PANTALLA;
 	private int ALTURA_PANTALLA;
 	
-	private GLabel marcador;
 	private int morts = 0;
+	private int grocs=0;
 	private int escapats = 0;
 	private transient int codiTeclat;
 
+	private Soldat s;
+	
 	List<Soldat> soldats = new ArrayList<Soldat>();
-
+	List<Soldat> soldatsMorts= new ArrayList<Soldat>();
+	
 	public Joc(int AMPLADA_PANTALLA, int ALTURA_PANTALLA) {
 		this.AMPLADA_PANTALLA = AMPLADA_PANTALLA;
 		this.ALTURA_PANTALLA = ALTURA_PANTALLA;
@@ -33,10 +36,12 @@ public class Joc implements Serializable{
 	private void creaSoldats() {
 
 		for(int i=0; i<5; i++){
-			Soldat s = new Soldat(AMPLADA_PANTALLA, ALTURA_PANTALLA);
+			s = new Soldat(AMPLADA_PANTALLA, ALTURA_PANTALLA);
+			if(s.isEsGroc()){
+				grocs++;
+			}
 			soldats.add(s);
 		}
-
 	}
 	
 	public void recuperaImatges(){
@@ -49,15 +54,24 @@ public class Joc implements Serializable{
 		return soldats;
 	}
 
+	public List<Soldat> getSoldatsMorts() {
+		return soldatsMorts;
+	}
+	
 	public void mou() {
 		for (Soldat s : soldats) {
+			
 			s.mou();
+			if(s.sHaEscapat()){
+				escapats++;
+			}
 		}
+		
 	}
 
 	// para el joc
 	public int gameOver() {
-		if( escapats > 20 || codiTeclat == 88){
+		if( escapats > 20 || codiTeclat == 88 || morts>=grocs){
 			return 1;
 		}else if(codiTeclat==83){
 			return 2;
@@ -79,4 +93,12 @@ public class Joc implements Serializable{
 		}
 		
 	}
+	public void afegeixMorts(){
+		morts++;
+	}
+	
+	public GLabel getMarcador(){
+		return new GLabel("Escapats: " + escapats + " | Morts: " + morts,AMPLADA_PANTALLA/2-50,20);
+	}
+	
 }
